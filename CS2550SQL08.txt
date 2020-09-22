@@ -1,0 +1,59 @@
+Brenton Randolph
+CS2550 SQL Assignment #8
+
+--1
+SELECT s.student_id, first_name, last_name
+FROM Student s INNER JOIN Enrollment e
+ON s.student_id = e.student_id
+GROUP BY s.student_id, first_name, last_name
+HAVING COUNT(*) = (SELECT MAX(COUNT(*))
+FROM Enrollment
+GROUP BY Student_id)
+ORDER BY Last_Name, First_Name;
+
+--2
+SELECT i.First_Name, i.Last_Name, i.PHONE
+FROM Instructor i INNER JOIN zipcode z
+ON i.zip = z.zip
+INNER JOIN Student s
+ON s.zip = z.zip
+WHERE i.zip IN (SELECT zip
+FROM instructor
+INTERSECT
+SELECT zip
+FROM student);
+
+--3
+SELECT First_Name, Last_Name, zipcode.City, 'Student' AS Role
+FROM student INNER JOIN zipcode
+ON student.zip = zipcode.zip
+WHERE zipcode.zip = '10025'
+UNION
+SELECT First_Name, Last_Name, zipcode.City, 'Instructor' AS Role
+FROM instructor INNER JOIN zipcode
+ON instructor.zip = zipcode.zip
+WHERE zipcode.zip = '10025'
+ORDER BY Role, last_name, first_name;
+
+--4
+SELECT DISTINCT LOC AS Location, Sections, Students
+FROM 
+(SELECT Location AS LOC, COUNT(*) AS Students
+FROM Enrollment e INNER JOIN section sec
+ON e.section_id = sec.section_id
+GROUP By Location),
+(SELECT location AS Locat, COUNT(*) AS Sections
+FROM Section
+GROUP BY location)
+WHERE LOC = Locat
+ORDER BY location;
+
+--5
+SELECT Grade_type_code, numeric_grade AS Grade
+FROM Grade
+WHERE Student_id = '112' AND section_id = '95'
+UNION ALL
+SELECT 'Average for student 112' AS Grade_type_code, ROUND(AVG(Numeric_Grade), 2) AS Grade
+FROM Grade
+WHERE Student_id = '112' AND section_id = '95'
+ORDER BY Grade_Type_Code DESC, grade DESC;

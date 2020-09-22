@@ -1,0 +1,71 @@
+-- CS2550 Brenton Randolph
+-- SQL Assignment #2
+
+--1
+SELECT First_Name|| ' ' || Last_Name AS Student_Name, Phone
+FROM Student
+WHERE Employer = 'Board Utilities'
+ORDER BY Last_Name, First_Name;
+
+--2
+SELECT UNIQUE Employer
+FROM Student
+WHERE UPPER(Employer) LIKE '%SYSTEMS%'
+ORDER BY Employer;
+
+--3
+SELECT UPPER(Last_Name)|| ' ' || SUBSTR(First_Name,1,1) || '.' AS Student_Name, Phone
+FROM Student
+WHERE Phone LIKE '212%'
+ORDER BY Last_Name, First_Name;
+
+--4
+SELECT First_Name|| ' ' || Last_Name AS Student, Street_Address, ZIP
+FROM Student
+WHERE Phone IS NULL;
+
+--5
+SELECT UNIQUE Zip
+FROM Zipcode
+WHERE UPPER(City) LIKE '%JERSEY CITY%' AND State = 'NJ'
+ORDER BY Zip;
+
+--6
+SELECT Course_No, Location
+FROM Section
+WHERE UPPER(Location) LIKE 'M%'
+ORDER BY Course_No;
+
+--7
+SELECT
+       CASE WHEN State = 'GA' THEN 'Georgia'
+            WHEN State = 'FL' THEN 'Florida'
+            WHEN State = 'MA' THEN 'Massachusetts'
+            Else State
+            END State_Name,
+            State, City
+FROM Zipcode
+WHERE State = 'GA' OR State = 'FL' OR State = 'MA'
+ORDER BY City;
+
+
+--8
+SELECT Salutation || '.' || ' ' || First_Name || ' ' || Last_Name || ' ' || Street_Address ||
+       ' ' || ZIP AS Instructor_Address
+FROM Instructor
+WHERE ZIP = '10025'
+ORDER BY Last_Name, First_Name;
+
+
+--9
+SELECT UNIQUE Student_ID, Numeric_Grade
+FROM Grade
+WHERE Section_ID LIKE '%87%'
+ORDER BY Numeric_Grade DESC;
+
+
+--10
+SELECT Student_ID, Numeric_Grade
+FROM Grade
+WHERE Section_ID = 103
+ORDER BY Numeric_Grade DESC;

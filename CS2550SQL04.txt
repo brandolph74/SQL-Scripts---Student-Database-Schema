@@ -1,0 +1,70 @@
+-- CS2550 Brenton Randolph
+-- SQL Assignment #4
+
+--1
+Select ROUND(AVG(Cost),2) AS Average_Cost
+FROM Course;
+
+--2
+Select COUNT(*) AS January_Registrations 
+FROM Student
+WHERE TO_CHAR(Registration_Date, 'MON-YY') = 'JAN-07';
+
+--3
+Select AVG(Numeric_Grade) AS Average, 
+       MAX (Numeric_Grade) AS Highest, 
+       MIN(Numeric_Grade) AS Lowest 
+FROM Grade
+WHERE Grade_Type_Code = 'FI' AND Section_ID = '152';
+
+--4
+Select City, State, Count(*) AS ZipCodes
+FROM Zipcode
+GROUP BY City, State
+HAVING COUNT(*) > 3
+ORDER BY City, State;
+
+--5
+Select Section_ID, COUNT(*) AS Enrolled
+FROM Enrollment
+WHERE TO_CHAR(Enroll_Date, 'DD-MON-YY') = '21-FEB-07'
+GROUP BY Section_ID
+ORDER BY Enrolled DESC;
+
+--6
+Select DISTINCT Student_ID, Section_ID, ROUND(AVG(Numeric_Grade), 4) AS AVERAGEGRADE
+FROM Grade
+WHERE Section_ID = '86'
+GROUP BY Student_ID, Section_ID
+ORDER BY Student_ID;
+
+--7
+Select Student_ID, COUNT(*) AS Sections
+FROM Enrollment
+WHERE Student_ID = '250'
+GROUP BY Student_ID;
+
+--8
+Select Section_ID, MIN(Numeric_Grade) AS LOWSCORE
+FROM Grade
+WHERE Grade_Type_Code = 'QZ'  
+GROUP BY Section_ID
+HAVING MIN(Numeric_Grade) >= '80'
+ORDER BY Section_ID;
+
+
+--9
+Select Employer, COUNT(*) AS Employees 
+FROM Student 
+GROUP BY Employer
+HAVING COUNT(*) >= '5'
+ORDER BY Employees ASC;
+
+
+--10
+Select Section_ID, Count(*) AS Participation_Grades, MIN(Numeric_Grade) AS Lowest_Grade 
+FROM Grade 
+WHERE Grade_Type_Code = 'PA'
+GROUP BY Section_ID
+HAVING COUNT(*) > '15'
+ORDER BY Section_ID;

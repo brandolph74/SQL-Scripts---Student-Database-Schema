@@ -1,0 +1,91 @@
+Brenton Randolph
+CS2550 SQL Assignment #9
+
+EX:
+SELECT EmpFirstName, EmpLastName, NVL(Orders, 0) AS Orders
+FROM Employee lt LEFT OUTER JOIN
+(SELECT o.empNo, COUNT(*) AS Orders
+FROM Customer c INNER JOIN OrderTbl o
+ON c.custNo = o.custNo
+INNER JOIN Employee e
+ON o.empNo = e.empNo
+WHERE custstate = 'CO'
+GROUP BY o.EmpNo, EmpFirstName, EmpLastName) rt
+ON lt.empNo = rt.empNo;
+
+--1
+SELECT i.first_name, i.last_name, Sections
+FROM instructor i LEFT OUTER JOIN 
+(SELECT first_name, last_name, COUNT(*) AS Sections
+FROM section sec, instructor i
+where sec.instructor_id = i.instructor_id
+GROUP BY first_name, last_name) c
+ON i.first_name = c.first_name
+AND i.last_name = c.last_name
+ORDER BY i.last_name, i.first_name;
+
+
+
+--2
+SELECT course_no
+FROM
+(SELECT course_no, COUNT(*) AS counter
+FROM
+(SELECT DISTINCT course_no, g.grade_type_code
+FROM Grade g INNER JOIN Grade_Type_Weight gtw
+ON g.section_id = gtw.section_id
+AND g.grade_type_code = gtw.grade_type_code
+INNER JOIN Section sec
+ON gtw.section_id = sec.section_id
+)
+GROUP BY course_no
+ORDER BY course_no)
+WHERE counter > 5;
+
+--3
+SELECT DISTINCT zip, students
+FROM(
+SELECT DISTINCT z.zip, NVL(Students, 0) AS Students
+FROM Zipcode z LEFT OUTER JOIN
+(SELECT DISTINCT s.student_id, s.zip AS zip, COUNT(*) AS Students
+FROM student s, zipcode z, enrollment e
+WHERE z.zip = s.zip
+AND e.student_id = s.student_id
+AND City = 'Flushing'
+AND State = 'NY'
+GROUP BY s.zip, s.student_id) c
+ON c.zip = z.zip
+WHERE z.state = 'NY' AND z.city = 'Flushing'
+GROUP BY z.zip, Students
+);
+
+--4
+SELECT c.course_no, c.description, NVL(Enrollments, 0) AS Enrollments
+FROM course c  LEFT OUTER JOIN 
+(SELECT c.course_no, description, COUNT(*) AS Enrollments
+FROM section sec, course c, enrollment e
+WHERE sec.section_id = e.section_id
+AND c.course_no = sec.course_no
+AND description LIKE '%Java%'
+GROUP BY c.course_no, description
+) sq
+ON c.course_no = sq.course_no
+AND c.description = sq.description
+WHERE c.description LIKE '%Java%'
+ORDER BY c.course_no;
+
+--5
+SELECT s.student_id, s.first_name, s.last_name, TO_CHAR(NVL(Enrollments, 'none')) AS Enrollments
+FROM Student s  LEFT OUTER JOIN 
+(SELECT s.student_id, s.first_name, s.last_name, TO_CHAR(COUNT(*)) AS Enrollments
+FROM student s, zipcode z, enrollment e
+WHERE s.student_id = e.student_id
+AND s.zip = z.zip
+AND s.phone LIKE '617%'
+GROUP BY s.student_id, s.first_name, s.last_name
+) sq
+ON s.student_id = sq.student_id
+AND s.first_name = sq.first_name
+AND s.last_name = sq.last_name
+WHERE s.phone LIKE '617%'
+ORDER BY s.last_name, s.first_name;

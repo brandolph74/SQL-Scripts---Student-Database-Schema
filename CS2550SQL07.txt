@@ -1,0 +1,56 @@
+Brenton Randolph
+CS2550
+SQL Assigment #7
+
+--1
+SELECT Last_Name, First_Name
+FROM Instructor
+WHERE instructor_id NOT IN 
+(SELECT DISTINCT i.instructor_id
+FROM Instructor i INNER JOIN Section s
+ON i.instructor_id = s.instructor_id
+INNER JOIN Enrollment e
+ON s.section_id = e.section_id
+INNER JOIN Grade g
+ON e.student_id = g.student_id
+AND e.section_id = g.section_id
+WHERE grade_type_code = 'PJ')
+ORDER BY Last_Name, First_Name;
+
+--2
+SELECT COUNT(*) AS Below_Average
+FROM Grade
+WHERE grade_type_code = 'FI' AND Section_ID = '86' AND Numeric_Grade < (SELECT AVG(Numeric_Grade)
+FROM Grade
+WHERE grade_type_code = 'FI' AND Section_ID = '86');
+
+--3
+SELECT City, State
+FROM Zipcode z INNER JOIN Student s
+ON z.zip = s.zip
+GROUP BY City, State
+HAVING COUNT(*) = (Select MAX(COUNT(*))
+FROM Zipcode z INNER JOIN Student s
+ON z.zip = s.zip
+GROUP BY z.City, Z.State);
+
+--4
+SELECT s.Student_id, s.First_Name, s.Last_Name, g.Numeric_Grade
+FROM Grade g INNER JOIN Enrollment e
+ON g.student_ID = e.student_ID
+AND g.section_ID = e.section_ID
+INNER JOIN Student s
+ON e.student_ID = s.student_ID
+WHERE grade_type_code = 'FI' AND e.Section_ID = '81' AND Numeric_Grade < (SELECT AVG(Numeric_Grade)
+FROM Grade
+WHERE grade_type_code = 'FI' AND Section_ID = '81');
+
+--5
+SELECT s.Student_ID, s.last_name, s.first_name
+FROM Enrollment e INNER JOIN Section sec
+ON e.section_id = sec.section_id
+INNER JOIN Student s
+ON s.student_id = e.student_id
+GROUP BY s.Student_ID, s.last_name, s.first_name, sec.course_no
+HAVING COUNT(*) > 1
+ORDER BY s.student_id;

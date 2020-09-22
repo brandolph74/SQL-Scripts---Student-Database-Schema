@@ -1,0 +1,63 @@
+-- CS2550 Brenton Randolph
+-- SQL Assignment #3
+
+--1
+SELECT First_Name, Last_Name, Phone
+FROM Student
+WHERE TO_CHAR(Registration_Date, 'DD-MON-YY') = '23-FEB-07'
+ORDER BY last_name, first_name;
+
+--2
+SELECT course_no, section_id, start_date_time
+FROM Section
+WHERE Location = 'L211'
+ORDER BY start_date_time;
+
+--3
+SELECT course_no, section_id, start_date_time, instructor_id, capacity
+FROM Section
+WHERE TO_CHAR(start_date_time, 'MON-YY') = 'APR-07'
+ORDER BY start_date_time, course_no;
+
+--4
+SELECT Student_ID, Section_ID, Final_Grade
+FROM Enrollment
+WHERE TO_CHAR(Enroll_Date, 'MON-YY') = 'JAN-07' AND Final_Grade IS NOT NULL;
+
+--5
+Select TO_DATE('1/7/13','MM/DD/YY') + 98 AS Semester_End_Date
+FROM Dual;
+
+--6
+Select course_no
+FROM Section
+WHERE Location 
+LIKE 'M%' AND MOD(SUBSTR(Location, 2), 2) != '0'
+ORDER BY course_no;
+
+--7
+Select Last_Name, First_Name
+FROM Student
+WHERE Zip = '11214' 
+AND (TO_DATE(Registration_Date, 'DD-MON-YY') - TO_DATE(Created_Date, 'DD-MON-YY') >= 2)
+ORDER BY Last_Name, First_Name;
+
+
+--8
+Select First_Name, Last_Name, SYSDATE - TO_DATE(Registration_Date,'DD-MM-YY')  AS Years
+FROM Student
+WHERE Phone LIKE '203%' 
+ORDER BY Years DESC;
+
+
+--9
+Select DISTINCT TO_CHAR(Start_Date_Time, 'HH:MI') AS Start_Time
+FROM Section;
+
+
+--10
+Select Student_ID, Section_ID
+FROM Enrollment
+WHERE TO_CHAR(Enroll_Date, 'HH:MI AM') = '10:20 AM'
+ORDER BY Student_ID;
+

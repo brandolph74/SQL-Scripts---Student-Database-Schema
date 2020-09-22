@@ -1,0 +1,60 @@
+-- CS2550 Brenton Randolph
+-- SQL Assignment #1
+
+--1
+SELECT First_Name, Last_Name
+FROM Instructor
+ORDER BY Last_Name;
+
+--2
+SELECT DISTINCT Location
+FROM Section
+ORDER BY Location;
+
+--3
+SELECT First_Name, Last_Name
+FROM Instructor
+WHERE last_name LIKE 'W%'
+ORDER BY Last_Name;
+
+--4
+SELECT Phone, First_Name||' '||Last_Name, Employer
+FROM Student
+WHERE Last_Name = 'Miller'
+ORDER BY Phone;
+
+--5
+SELECT Course_No, Description
+FROM Course
+WHERE Prerequisite = '20'
+ORDER BY Course_No;
+
+--6
+SELECT Course_No, Description, Cost
+FROM Course
+WHERE Course_No BETWEEN 200 AND 299 AND COST < 1100
+ORDER BY Course_No;
+
+--7
+SELECT Course_No, Section_ID
+FROM Section
+WHERE Course_No BETWEEN 100 AND 199 AND Location IN ('L211', 'L214')
+ORDER BY Course_No;
+
+--8
+SELECT Course_No, Section_ID
+FROM Section
+WHERE Capacity IN (10, 12)
+ORDER BY Course_No;
+
+--9
+SELECT DISTINCT Student_ID, Numeric_grade
+FROM Grade
+WHERE Section_ID = 147
+ORDER BY Student_ID;
+
+--10
+SELECT Course_No, Description
+FROM Course
+WHERE Course_No BETWEEN 200 AND 299 And Prerequisite IS NOT NULL
+ORDER BY Description;

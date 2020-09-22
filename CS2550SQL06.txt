@@ -1,0 +1,125 @@
+Brenton Randolph
+CS2550
+SQL Assigment #6
+
+--1
+SELECT Student_ID
+FROM Enrollment
+GROUP BY Student_ID
+HAVING COUNT(*) = 
+(SELECT MAX(Enrolled_Courses)
+FROM (SELECT Student_ID, COUNT(*) AS Enrolled_Courses 
+FROM Enrollment
+WHERE Section_ID > 99 AND Section_ID < 200
+GROUP BY Student_ID));
+
+--2
+Select s.Student_id, s.last_name, s.first_name
+FROM Student s INNER JOIN Enrollment e
+ON s.student_id = e.student_id
+INNER JOIN Grade g
+ON e.student_id = g.student_id
+AND e.section_id = g.section_id
+INNER JOIN Section sec
+ON e.section_id = sec.section_id
+WHERE grade_type_code = 'FI' AND sec.course_no = '230' AND e.section_id = '100' AND numeric_grade = 
+(SELECT Max(Numeric_Grade)
+FROM Grade g INNER JOIN Enrollment e
+ON g.student_id = e.student_id
+AND g.section_id = e.section_id
+INNER JOIN Student s
+ON s.student_id = e.student_id
+INNER JOIN Section sec
+ON e.section_id = sec.section_id
+WHERE sec.Course_no = '230' AND sec.section_id = '100' AND g.grade_type_code = 'FI');
+
+--3
+Select Salutation, First_Name, Last_Name, zip
+FROM Instructor
+WHERE Instructor_ID NOT IN
+(Select Instructor_ID
+FROM Section);
+
+--4
+SELECT Last_Name, Numeric_Grade
+FROM
+(SELECT s.last_name, g.numeric_grade
+FROM Grade g INNER JOIN Enrollment e
+ON g.student_id = e.student_id
+AND g.section_id = e.section_id
+INNER JOIN Student s
+ON s.student_id = e.student_id
+INNER JOIN Section sec
+ON e.section_id = sec.section_id
+WHERE sec.section_id = '154' AND g.grade_type_code = 'FI')
+WHERE Numeric_Grade > (
+SELECT AVG(Numeric_Grade)
+FROM Grade
+WHERE Grade_Type_Code = 'FI'
+AND Section_ID = '154')
+ORDER BY Last_Name;
+
+--5
+SELECT sec.Course_No, c.description
+FROM Course c INNER JOIN Section sec
+ON c.course_no = sec.course_no
+GROUP BY sec.Course_no, c.description
+HAVING COUNT(*) =
+(SELECT MAX(COUNT(*))
+FROM Section
+GROUP BY Course_No);
+
+--6
+SELECT c.course_no, c.description
+FROM section sec INNER JOIN Course c
+ON c.course_no = sec.course_no
+WHERE TO_CHAR(Start_Date_Time, 'HH-MI') = '10-30'
+ORDER BY Course_No;
+
+--7
+SELECT s.student_ID, s.Last_Name
+FROM Student s INNER JOIN Enrollment e
+ON s.student_id = e.student_id
+INNER JOIN Grade g
+ON e.student_id = g.student_id
+AND e.section_id = g.section_id
+WHERE Grade_Code_Occurrence = '3' 
+AND Grade_Type_Code = 'QZ'
+AND e.Section_id = '135' and g.numeric_grade < (SELECT AVG(Numeric_Grade)
+FROM Grade
+WHERE section_id = '135' AND Grade_Code_Occurrence = '3' AND Grade_Type_Code = 'QZ');
+
+--8
+SELECT first_name, Last_Name, phone
+FROM (SELECT s.first_name, s.Last_Name, s.phone
+FROM Student s INNER JOIN Enrollment e
+ON s.student_id = e.student_id
+INNER JOIN Section sec
+ON sec.section_id = e.section_id
+INNER JOIN Course c
+ON c.course_no = sec.course_no
+WHERE sec.course_no = '142'
+ORDER BY s.first_name, s.last_name, s.phone)
+WHERE  first_name IN (SELECT s.first_name, s.Last_Name, s.phone
+FROM Student s INNER JOIN Enrollment e
+ON s.student_id = e.student_id
+INNER JOIN Section sec
+ON sec.section_id = e.section_id
+INNER JOIN Course c
+ON c.course_no = sec.course_no
+WHERE sec.course_no = '142'
+ORDER BY s.first_name, s.last_name, s.phone);
+
+--9
+SELECT i.first_name, i.last_name, c.course_no, c.description
+FROM Course c INNER JOIN Section sec
+ON c.course_no = sec.course_no
+INNER JOIN Instructor i
+ON i.instructor_id = sec.instructor_id
+GROUP BY i.first_name, i.last_name, c.course_no, c.description
+HAVING COUNT(*) =
+(SELECT MAX(COUNT(*))
+FROM Course c INNER JOIN Section sec
+ON c.course_no = sec.course_no
+WHERE description LIKE '%Java%'
+GROUP BY sec.Instructor_ID);

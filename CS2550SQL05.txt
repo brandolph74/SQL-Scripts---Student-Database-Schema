@@ -1,0 +1,91 @@
+--Brenton Randolph CS2550
+--SQL Assignment #5
+
+--1
+
+Select Course.course_no, Course.description, Course.cost
+FROM Course INNER JOIN Section
+ON Course.course_no = section.course_no
+INNER JOIN Instructor
+ON Section.Instructor_ID = Instructor.Instructor_ID
+WHERE Instructor.First_Name = 'Charles';
+
+--2
+Select MAX(Grade.Numeric_Grade) AS Highest_Final_Grade 
+FROM Grade INNER JOIN Enrollment
+ON Grade.student_id = Enrollment.student_id
+AND Grade.section_id = Enrollment.section_id
+INNER JOIN Section
+ON Enrollment.Section_ID = Section.Section_ID
+WHERE Grade.Grade_Type_Code = 'FI' AND Section.course_no = '130';
+
+--3
+Select Student.First_Name, Student.Last_Name, Student.Phone 
+FROM Student INNER JOIN Zipcode
+ON Student.Zip = Zipcode.Zip
+WHERE Zipcode.City = 'New York' AND Zipcode.State = 'NY'
+ORDER BY Student.Last_Name, Student.First_Name;
+
+--4
+Select Grade_Type.Grade_Type_Code, Grade_Type.Description, Grade_Type_Weight.Number_Per_Section
+FROM Grade_Type INNER JOIN Grade_Type_Weight
+ON Grade_Type.Grade_Type_Code = Grade_Type_Weight.Grade_Type_Code
+INNER JOIN Section
+ON Grade_Type_Weight.Section_ID = Section.Section_ID
+WHERE Section.course_no = '220'
+ORDER BY Grade_Type.Description;
+
+--5
+Select Student.Student_ID, Student.Last_Name||', '||Student.First_Name AS Student_Name
+FROM Student INNER JOIN Enrollment
+ON Student.Student_ID = Enrollment.Student_ID
+INNER JOIN Grade
+ON Enrollment.Student_ID = Grade.Student_ID
+AND Enrollment.Section_ID = Grade.Section_ID
+GROUP BY Student.Student_ID, Student.Last_Name||', '||Student.First_Name
+HAVING AVG(Grade.Numeric_Grade) < '80'
+ORDER BY Student_Name;
+
+--6
+Select Cost, COUNT(*)
+FROM Course
+GROUP BY Cost
+HAVING COUNT(*) > 2
+ORDER BY Cost;
+
+--7
+Select course.course_no, COUNT(*) AS Enrolled
+FROM Course INNER JOIN Section
+ON course.course_no = section.course_no
+INNER JOIN Enrollment
+ON Enrollment.section_id = section.section_id
+WHERE course.prerequisite IS NULL
+GROUP BY course.course_no
+ORDER BY Enrolled;
+
+--8
+Select DISTINCT Student.First_Name, Student.Last_Name, Enrollment.Enroll_Date
+FROM Zipcode INNER JOIN Student
+ON student.zip = zipcode.zip
+INNER JOIN Enrollment
+ON Enrollment.student_id = student.student_id
+WHERE UPPER(zipcode.city) = ('STAMFORD') AND State = 'CT' AND Enroll_Date > DATE '2007-2-19'
+ORDER BY Last_Name, First_Name;
+
+--9
+Select Course.course_no, course.Description 
+FROM Course INNER JOIN Section
+ON course.course_no = section.course_no
+INNER JOIN Grade_Type_Weight gtw
+ON gtw.section_id = section.section_id
+INNER JOIN Grade_Type gt
+ON gt.grade_type_code = gtw.grade_type_code
+WHERE gt.description = 'Project'
+ORDER BY course.course_no;
+
+--10
+Select c1.course_no, c1. prerequisite as prereq, c2.description Description
+FROM course c1 JOIN course c2
+ON c1.prerequisite = c2.course_no
+WHERE c1.course_no >= '300' AND c1.course_no < '399' 
+ORDER BY c1.course_no;
